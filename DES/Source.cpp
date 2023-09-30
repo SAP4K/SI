@@ -20,7 +20,7 @@ inline bool return_valor_forbit(char bit)
 	else
 		return false;
 }
-void Password_Coding(const int* pc1, const int* pc2)
+std::bitset<48> Password_Coding(const int* pc1, const int* pc2)
 {
 	std::string string_password;
 	std::bitset<64> password_in_bits = 0x133457799BBCDFF1;
@@ -94,9 +94,9 @@ void Password_Coding(const int* pc1, const int* pc2)
 			}
 		}
 	}
-
+	return key;
 }
-void Coding_Message(const int* ip, const int* expansion_table)
+void Coding_Message(const int* ip, const int* expansion_table, )
 {
 	//std::cout << "Introdu Mesajul: ";
 	std::string message = "0000000100100011010001010110011110001001101010111100110111101111";
@@ -107,22 +107,20 @@ void Coding_Message(const int* ip, const int* expansion_table)
 	for (int i = 0; i < 64; i++)
 	{
 		if (i < 32)
-			left_message[0].set(i, return_valor_forbit(message.c_str()[ip[i] - 1]));
+			left_message[0].set(31 - i, return_valor_forbit(message.c_str()[ip[i] - 1]));
 		else
-			right_message[0].set(i - 32, return_valor_forbit(message.c_str()[ip[i] - 1]));
+			right_message[0].set(31- (i - 32), return_valor_forbit(message.c_str()[ip[i] - 1]));
 	}
 	for(int i=1;i<16;i++)
 	{
 		left_message[i] = right_message[i - 1];
 		right_message[i] = left_message[i - 1];
-		std::bitset<48> temp = 0;
-		for(int j=0;j<48;j++)
+		std::bitset<48> temporar = 0;
+		for(int j = 0; j < 48; j++)
 		{
-			//std::cout << expansion_table[j] - 1;
-			std::cout << right_message[0].to_string()[expansion_table[j]-1];
+			temporar.set(47 - j, return_valor_forbit(right_message[i - 1].to_string().c_str()[expansion_table[j] - 1]) );
 		}
 	}
-
 }
 int main(void)
 {
@@ -179,7 +177,7 @@ int main(void)
 		{
 			if (meniu.c_str()[0] == '1') 
 			{
-				//Password_Coding(pc1, pc2);
+				Password_Coding(pc1, pc2);
 				Coding_Message(ip, expansion_table);
 			}
 			
