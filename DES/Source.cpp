@@ -20,7 +20,7 @@ inline bool return_valor_forbit(char bit)
 	else
 		return false;
 }
-std::bitset<48> Password_Coding(const int* pc1, const int* pc2)
+void Password_Coding(const int* pc1, const int* pc2)
 {
 	std::string string_password;
 	std::bitset<64> password_in_bits = 0x133457799BBCDFF1;
@@ -94,9 +94,8 @@ std::bitset<48> Password_Coding(const int* pc1, const int* pc2)
 			}
 		}
 	}
-	return key;
 }
-void Coding_Message(const int* ip, const int* expansion_table, )
+void Coding_Message(const int* ip, const int* expansion_table)
 {
 	//std::cout << "Introdu Mesajul: ";
 	std::string message = "0000000100100011010001010110011110001001101010111100110111101111";
@@ -162,26 +161,7 @@ int main(void)
 	22,23,24,25,24,25,26,27,
 	28,29,28,29,30,31,32,1
 	};
-	std::cout << "Introdu Obtiunea:\n1-Codificare\n2-Decodifincare\nIntrodu - ";
-	std::string meniu;
-	std::getline(std::cin, meniu);
-	while(true)
-	{
-		if((meniu.c_str()[0] != '1') && (meniu.c_str()[0] != '2'))
-		{
-			std::cout << "Valoare Ironata, Introdu alta - ";
-			meniu.clear();
-			std::getline(std::cin, meniu);
-		}
-		else
-		{
-			if (meniu.c_str()[0] == '1') 
-			{
-				Password_Coding(pc1, pc2);
-				Coding_Message(ip, expansion_table);
-			}
-			
-			break;
-		}
-	}
+	Coding cod;
+	cod.coding_password();
+	cod.coding_message();
 }
