@@ -3,12 +3,12 @@ Coding::Coding() {};
 Coding::Coding(std::string Password, std::string Message ): password(Password), message(Message)
 {
 }
-void Coding::set_message()
+void Coding::set_message(void)
 {
 	std::cout << "Introdu mesajul: ";
 	std::getline(std::cin, this->message);
 }
-void Coding::set_password()
+void Coding::set_password(void)
 {
 	std::cout << "Introdu parola: ";
 	std::getline(std::cin, this->password);
@@ -39,7 +39,7 @@ inline bool Coding::return_valor_forbit(char bit)
 	else
 		return false;
 }
-void Coding::coding_password()
+void Coding::coding_password(void)
 {
 	std::string string_password;
 	std::bitset<64> password_in_bits = 0x133457799BBCDFF1;
@@ -80,13 +80,13 @@ void Coding::coding_password()
 				this->key[i-1].set(47 - j, this->return_valor_forbit(temporar_key.to_string().c_str()[this->pc2[j] - 1]));
 		}
 	}
-
 }
-void Coding::coding_message()
+void Coding::coding_message(void)
 {
 	std::string message = "0000000100100011010001010110011110001001101010111100110111101111";
 	std::bitset<32> left_message[17];
 	std::bitset<32> right_message[17];
+	std::bitset<64> invers_permutation_result = 0;
 	for (uint8_t i = 0; i < 64; i++)
 	{
 		if (i < 32)
@@ -130,14 +130,12 @@ void Coding::coding_message()
 			valor += this->substition_boxes[j - 1][y.to_ullong()][x.to_ullong()];
 			s_box_result = valor;
 		}
-		//std::cout << s_box_result.to_string();
 		for(uint8_t j = 0; j<32; j++)
-		{
 			right_message[i].set(31-j, this->return_valor_forbit( s_box_result.to_string().c_str()[this->s_box_permutation[j] - 1]) );
-		}
 		right_message[i] ^= left_message[i - 1];
 	}
 	uint64_t left_right_message = (right_message[16].to_ullong()<<32) + left_message[16].to_ullong();
-	std::bitset<64> test = left_right_message;
-
+	invers_permutation_result = left_right_message;
+	for(uint8_t i=0;i<64;i++)
+		this->encrypted_message.set(63 - i, this->return_valor_forbit(invers_permutation_result.to_string().c_str()[inverse_permutation[i] - 1]  ));
 }
