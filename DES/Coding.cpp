@@ -7,16 +7,30 @@ void Coding::set_message(void)
 {
 	std::cout << "Introdu mesajul: ";
 	std::getline(std::cin, this->message);
+	while(this->message.empty())
+	{
+		std::cout << "Nu este introdu nimic, introdu text: "; 
+		std::getline(std::cin, this->message);
+	}
 }
 void Coding::set_password(void)
 {
 	std::cout << "Introdu parola: ";
 	std::getline(std::cin, this->password);
+	std::bitset<64> temporar_buffer = 0;
+	uint64_t password_to_64_bits = 0;
 	while(this->password.size()<8)
 	{
 		std::cout << "Parola prea scurta, introdu alta: ";
 		std::getline(std::cin, this->password);
+	} 
+	for(int i=0;i<this->password.size();i++)
+	{
+		password_to_64_bits = password_to_64_bits << 8;
+		password_to_64_bits += (uint8_t) this->password.c_str()[i];
 	}
+	temporar_buffer = password_to_64_bits;
+	this->password = temporar_buffer.to_string();
 }
 std::bitset<28> Coding::Shifting_Sub_Key(const std::bitset<28>& key)
 {
@@ -41,19 +55,20 @@ inline bool Coding::return_valor_forbit(char bit)
 }
 void Coding::coding_password(void)
 {
-	std::string string_password;
-	std::bitset<64> password_in_bits = 0x133457799BBCDFF1;
+	if(this->password.empty())
+	{
+		std::cout << "Nu este introdusa parola\n";
+		return;
+	}
 	std::bitset<28> C[17]{ 0 };
 	std::bitset<28> D[17]{ 0 };
-	string_password = password_in_bits.to_string();
-	password_in_bits.reset();
 	for (uint8_t i = 0; i < 56; i++)
 	{
 		if (i < 28)
-			C[0].set(27 - i, this->return_valor_forbit(string_password.c_str()[pc1[i] - 1]));
+			C[0].set(27 - i, this->return_valor_forbit(this->password.c_str()[pc1[i] - 1]));
 		
 		else
-			D[0].set(27 - (i - 28), this->return_valor_forbit(string_password.c_str()[pc1[i] - 1]));
+			D[0].set(27 - (i - 28), this->return_valor_forbit(this->password.c_str()[pc1[i] - 1]));
 	}
 	for (uint8_t i = 0; i < 17; i++)
 	{
@@ -138,4 +153,5 @@ void Coding::coding_message(void)
 	invers_permutation_result = left_right_message;
 	for(uint8_t i=0;i<64;i++)
 		this->encrypted_message.set(63 - i, this->return_valor_forbit(invers_permutation_result.to_string().c_str()[inverse_permutation[i] - 1]  ));
+	std::cout << this->encrypted_message.to_ullong();
 }

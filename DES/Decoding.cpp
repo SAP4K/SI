@@ -5,7 +5,22 @@ void Decoding::set_encrypted_message(void)
 }
 void Decoding::set_password(void)
 {
-
+	std::cout << "Introdu parola: ";
+	std::getline(std::cin, this->password);
+	std::bitset<64> temporar_buffer = 0;
+	uint64_t password_to_64_bits = 0;
+	while (this->password.size() < 8)
+	{
+		std::cout << "Parola prea scurta, introdu alta: ";
+		std::getline(std::cin, this->password);
+	}
+	for (int i = 0; i < this->password.size(); i++)
+	{
+		password_to_64_bits = password_to_64_bits << 8;
+		password_to_64_bits += (uint8_t)this->password.c_str()[i];
+	}
+	temporar_buffer = password_to_64_bits;
+	this->password = temporar_buffer.to_string();
 }
 std::bitset<28> Decoding::Shifting_Sub_Key(const std::bitset<28>& key)
 {
@@ -30,19 +45,20 @@ inline bool Decoding::return_valor_forbit(char bit)
 }
 void Decoding::coding_password(void)
 {
-	std::string string_password;
-	std::bitset<64> password_in_bits = 0x133457799BBCDFF1;
+	if(this->password.empty())
+	{
+		std::cout << "Nu este introdusa parola\n";
+		return;
+	}
 	std::bitset<28> C[17]{ 0 };
 	std::bitset<28> D[17]{ 0 };
-	string_password = password_in_bits.to_string();
-	password_in_bits.reset();
 	for (uint8_t i = 0; i < 56; i++)
 	{
 		if (i < 28)
-			C[0].set(27 - i, this->return_valor_forbit(string_password.c_str()[pc1[i] - 1]));
+			C[0].set(27 - i, this->return_valor_forbit(this->password.c_str()[pc1[i] - 1]));
 
 		else
-			D[0].set(27 - (i - 28), this->return_valor_forbit(string_password.c_str()[pc1[i] - 1]));
+			D[0].set(27 - (i - 28), this->return_valor_forbit(this->password.c_str()[pc1[i] - 1]));
 	}
 	for (uint8_t i = 0; i < 17; i++)
 	{
@@ -72,8 +88,8 @@ void Decoding::coding_password(void)
 }
 void Decoding::decrypting_message(void)
 {
-	std::bitset<64> password_in_bits = 0x85E813540F0AB405;
-	std::string message = "0000000100100011010001010110011110001001101010111100110111101111";
+	std::bitset<64> mesage_hex = 0x46A7CE2D647F39F5;
+	std::string message = mesage_hex.to_string();
 	std::bitset<32> left_message[17];
 	std::bitset<32> right_message[17];
 	std::bitset<64> invers_permutation_result = 0;
