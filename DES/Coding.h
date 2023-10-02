@@ -74,6 +74,6 @@ private:
 	std::bitset<48> key[16]{ 0 };
     std::bitset<64> encrypted_message = 0;
 	std::bitset<28> Shifting_Sub_Key(const std::bitset<28>&);
-	inline bool return_valor_forbit(char);
+	inline bool return_valor_from_bit(char);
 };
 
